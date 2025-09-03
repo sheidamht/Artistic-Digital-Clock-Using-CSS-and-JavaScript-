@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Clock</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(to bottom, #87ceeb, #f0f8ff);
+      font-family: 'Permanent Marker', cursive;
+      overflow: hidden;
+      transition: background 1s ease;
+    }
+
+    .clock {
+      text-align: center;
+      color: white;
+      text-shadow: 0 0 10px rgba(255,255,255,0.5), 2px 2px 10px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    .time {
+      font-size: 5.5rem;
+      letter-spacing: 0.1em;
+      animation: glowPulse 1.5s infinite alternate;
+      position: relative;
+      color: rgb(238, 241, 245);
+    }
+
+    .date {
+      font-size: 2rem;
+      margin-top: 10px;
+      letter-spacing: 0.05em;
+      text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+      color: rgb(229, 232, 233);
+    }
+
+    @keyframes glowPulse {
+      0% { text-shadow: 0 0 10px rgba(255,255,255,0.4), 0 0 20px rgba(173,216,230,0.5); }
+      50% { text-shadow: 0 0 20px rgba(110, 107, 107, 0.7), 0 0 40px rgba(173,216,230,0.7); }
+      100% { text-shadow: 0 0 30px rgb(164, 164, 164), 0 0 60px rgba(173,216,230,0.9); }
+    }
+
+    .floating-dots {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .dot {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: rgba(220, 217, 217, 0.6);
+      border-radius: 50%;
+      animation: floatDot linear infinite;
+      box-shadow: 0 0 10px rgba(142, 142, 142, 0.8);
+    }
+
+    @keyframes floatDot {
+      0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-20vh) scale(1); opacity: 0; }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="clock">
+    <div class="time" id="time">00:00:00</div>
+    <div class="date" id="date">Monday, January 1</div>
+  </div>
+
+  <div class="floating-dots" id="dots"></div>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+      let hours = now.getHours();
+      let minutes = now.getMinutes();
+      let seconds = now.getSeconds();
+
+      hours = hours < 10 ? '0'+hours : hours;
+      minutes = minutes < 10 ? '0'+minutes : minutes;
+      seconds = seconds < 10 ? '0'+seconds : seconds;
+
+      document.getElementById('time').textContent = `${hours}:${minutes}:${seconds}`;
+
+      const options = { weekday: 'long', month: 'long', day: 'numeric' };
+      document.getElementById('date').textContent = now.toLocaleDateString(undefined, options);
+
+      // Dynamic background
+      const body = document.body;
+      if(hours >= 6 && hours < 12){
+        body.style.background = 'linear-gradient(to bottom, #87ceeb, #f0f8ff)'; // Morning
+      } else if(hours >= 12 && hours < 18){
+        body.style.background = 'linear-gradient(to bottom, #ffb347, #ffcc33)'; // Afternoon
+      } else {
+        body.style.background = 'linear-gradient(to bottom, #4b0082, #191970)'; // Night
+      }
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Create animated floating dots for extra glow effect
+    const dotsContainer = document.getElementById('dots');
+    for(let i=0;i<70;i++){
+      const dot = document.createElement('div');
+      dot.classList.add('dot');
+      dot.style.left = Math.random() * 100 + 'vw';
+      dot.style.animationDuration = (4 + Math.random()*6) + 's';
+      dot.style.width = dot.style.height = (5 + Math.random()*15) + 'px';
+      dotsContainer.appendChild(dot);
+    }
+  </script>
+</body>
+</html>
